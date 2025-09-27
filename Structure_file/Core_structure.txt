@@ -1,0 +1,78 @@
+core/
+├── 🧩 brain/
+│   ├── cognitive_engine/           # Proses Berpikir
+│   │   ├── decision_maker.py       # Pengambil Keputusan Utama
+│   │   ├── problem_solver.py       # Pemecah Masalah Kompleks
+│   │   ├── context_manager.py      # Manajemen Konteks Percakapan
+│   │   └── priority_assigner.py    # Penentu Prioritas Task
+│   ├── neural_networks/            # Jaringan Neural Kustom
+│   │   ├── intent_classifier.py    # Klasifikasi Maksud User
+│   │   ├── emotion_detector.py     # Deteksi Emosi dari Text/Suara
+│   │   ├── pattern_recognizer.py   # Pengenalan Pola Kebiasaan User
+│   │   └── memory_retriever.py     # Retrieval Memory yang Relevan
+│   └── reasoning_engine/           # Mesin Penalaran
+│       ├── logical_reasoner.py     # Penalaran Logis (IF-THEN)
+│       ├── causal_inferencer.py    # Inferensi Sebab-Akibat
+│       └── analogy_maker.py        # Pembuat Analogi
+│
+├── 💬 nlp_processor/               # Pemrosesan Bahasa Alami
+│   ├── language_understanding/
+│   │   ├── semantic_parser.py      # Parsing Makna Kalimat
+│   │   ├── entity_extractor.py     # Ekstraksi Entitas (Nama, Lokasi)
+│   │   ├── sentiment_analyzer.py   # Analisis Sentimen
+│   │   └── sarcasm_detector.py     # Deteksi Sarcasm/Irony
+│   ├── language_generation/
+│   │   ├── response_generator.py   # Generator Respons Natural
+│   │   ├── personality_infuser.py  # Injeksi Kepribadian Alice
+│   │   ├── dialogue_flow.py        # Manajemen Alur Dialog
+│   │   └── multilingual_handler.py # Handler Multi-bahasa
+│   └── speech_processing/
+│       ├── stt_engine.py           # Speech-to-Text
+│       ├── tts_engine.py           # Text-to-Speech
+│       ├── voice_modulator.py      # Modulasi Suara Berdasarkan Emosi
+│       └── audio_analyzer.py       # Analisis Intonasi Suara User
+│
+├── 📚 memory/                      # Sistem Memori
+│   ├── short_term_memory/
+│   │   ├── conversation_buffer.py  # Buffer Percakapan Terkini
+│   │   ├── working_memory.py       # Memori Kerja (15-30 detik)
+│   │   └── context_window.py       # Window Konteks Saat Ini
+│   ├── long_term_memory/
+│   │   ├── knowledge_graph/        # Graf Pengetahuan
+│   │   │   ├── entity_database.py  # Database Entitas
+│   │   │   ├── relationship_mapper.py # Pemetaan Relasi
+│   │   │   └── inference_engine.py # Mesin Inferensi
+│   │   ├── episodic_memory.py      # Memori Episodik (Kejadian)
+│   │   ├── procedural_memory.py    # Memori Prosedural (Cara Kerja)
+│   │   └── semantic_memory.py      # Memori Semantik (Fakta)
+│   └── memory_operations/
+│       ├── memory_encoder.py       # Encode Memori Baru
+│       ├── memory_retriever.py     # Retrieve Memori
+│       ├── memory_consolidator.py  # Konsolidasi Memori
+│       └── memory_forgetter.py     # Strategic Forgetting
+│
+├── ⚡ learning_engine/              # Mesin Pembelajaran
+│   ├── supervised_learning/
+│   │   ├── feedback_processor.py   # Proses Feedback User
+│   │   ├── preference_learner.py   # Pembelajaran Preferensi
+│   │   └── behavior_adapter.py     # Adaptasi Perilaku
+│   ├── unsupervised_learning/
+│   │   ├── pattern_miner.py        # Mining Pola Kebiasaan
+│   │   ├── anomaly_detector.py     # Deteksi Anomali Perilaku
+│   │   └── cluster_analyzer.py     # Analisis Cluster Data
+│   └── reinforcement_learning/
+│       ├── reward_calculator.py    # Kalkulator Reward
+│       ├── policy_optimizer.py     # Optimasi Kebijakan
+│       └── exploration_engine.py   # Mesin Eksplorasi
+│
+├── 🔄 task_processor/              # Proses Task & Eksekusi
+│   ├── task_decomposer.py          # Dekomposisi Task Kompleks
+│   ├── action_planner.py           # Perencanaan Urutan Aksi
+│   ├── execution_monitor.py        # Monitoring Eksekusi
+│   └── result_evaluator.py         # Evaluasi Hasil
+│
+└── 🎯 consciousness_layer/         # LAPISAN KESADARAN (Advanced!)
+    ├── self_awareness.py           # Kesadaran Diri
+    ├── goal_manager.py             # Manajemen Goal Jangka Panjang
+    ├── meta_cognition.py           # Berpikir Tentang Cara Berpikir
+    └── ethical_framework.py        # Framework Etika
