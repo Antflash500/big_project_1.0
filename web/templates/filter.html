@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1><i class="fas fa-filter"></i> Word Filter</h1>
+        <p>Manage filtered words for Nexus Community</p>
+    </div>
+
+    <div class="content-grid">
+        <div class="form-card">
+            <h2><i class="fas fa-plus-circle"></i> Add Filtered Word</h2>
+            <form id="addFilterForm">
+                <div class="form-group">
+                    <label>Word to Filter</label>
+                    <input type="text" id="filterWord" placeholder="badword" required>
+                    <small>Case insensitive. Will auto-delete messages containing this word.</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Add Filter
+                </button>
+            </form>
+            
+            <div class="form-info">
+                <h3><i class="fas fa-shield-alt"></i> Filter Rules:</h3>
+                <ul>
+                    <li>Auto-deletes messages containing filtered words</li>
+                    <li>Case insensitive matching</li>
+                    <li>Admins are exempt from filtering</li>
+                    <li>Users receive a warning via DM</li>
+                    <li>Use for offensive, spam, or inappropriate content</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <h2><i class="fas fa-list"></i> Filtered Words ({{ words|length }})</h2>
+            
+            {% if words %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Word</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for word in words %}
+                        <tr>
+                            <td><code>{{ word.word }}</code></td>
+                            <td>
+                                <button class="btn btn-sm btn-danger delete-filter-btn" 
+                                        data-word="{{ word.word }}">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-actions">
+                <button class="btn btn-warning" id="clearAllBtn">
+                    <i class="fas fa-trash-alt"></i> Clear All Filters
+                </button>
+                <small>Warning: This action cannot be undone!</small>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-shield-alt"></i>
+                <h3>No filtered words</h3>
+                <p>Add words to automatically filter them from messages</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Add filter
+document.getElementById('addFilterForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const word = document.getElementById('filterWord').value.trim().toLowerCase();
+    
+    if (!word) {
+        alert('Please enter a word');
+        return;
+    }
+    
+    if (word.length < 2) {
+        alert('Word must be at least 2 characters');
+        return;
+    }
+    
+    const btn = this.querySelector('button');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+    btn.disabled = true;
+    
+    try {
+        const res = await fetch('/api/filter', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({word})
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+            alert(`"${word}" added to filter list!`);
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to add word'));
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    } finally {
+        btn.innerHTML = '<i class="fas fa-save"></i> Add Filter';
+        btn.disabled = false;
+    }
+});
+
+// Delete filter
+document.querySelectorAll('.delete-filter-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const word = this.dataset.word;
+        
+        if (!confirm(`Remove "${word}" from filter list?`)) {
+            return;
+        }
+        
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        this.disabled = true;
+        
+        try {
+            const res = await fetch(`/api/filter/${encodeURIComponent(word)}`, {
+                method: 'DELETE'
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok) {
+                alert(`"${word}" removed from filter list!`);
+                location.reload();
+            } else {
+                alert('Error: ' + (data.error || 'Failed to remove'));
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
+});
+
+// Clear all filters
+document.getElementById('clearAllBtn')?.addEventListener('click', async function() {
+    if (!confirm('⚠️ WARNING!\n\nThis will delete ALL filtered words!\n\nAre you sure?')) {
+        return;
+    }
+    
+    if (prompt('Type "DELETE ALL" to confirm:') !== 'DELETE ALL') {
+        alert('Cancelled');
+        return;
+    }
+    
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Clearing...';
+    this.disabled = true;
+    
+    try {
+        // Get all words first
+        const res = await fetch('/api/filter');
+        const words = await res.json();
+        
+        // Delete each word
+        for (const word of words) {
+            await fetch(`/api/filter/${encodeURIComponent(word.word)}`, {
+                method: 'DELETE'
+            });
+        }
+        
+        alert('All filters cleared successfully!');
+        location.reload();
+    } catch (error) {
+        alert('Error: ' + error.message);
+    } finally {
+        this.innerHTML = '<i class="fas fa-trash-alt"></i> Clear All Filters';
+        this.disabled = false;
+    }
+});
+</script>
+
+<style>
+.form-info {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(106, 17, 203, 0.1);
+    border-radius: 8px;
+}
+
+.form-info h3 {
+    color: #6a11cb;
+    margin-bottom: 0.5rem;
+}
+
+.form-info ul {
+    margin-left: 1.5rem;
+    color: #b0b0b0;
+}
+
+.form-info li {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.table-actions {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.btn-warning {
+    background: #f39c12;
+    color: white;
+    border: none;
+}
+
+.btn-warning:hover {
+    background: #e67e22;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: #6a11cb;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}

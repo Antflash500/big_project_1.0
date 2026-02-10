@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <i class="fas fa-network-wired"></i>
+            <h1>Nexus Community Dashboard</h1>
+            <p>Admin Login Panel</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('login_route') }}" class="login-form">
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i> Username
+                </label>
+                <input type="text" id="username" name="username" required 
+                       placeholder="Enter username" value="admin">
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> Password
+                </label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Enter password" value="nexus123">
+            </div>
+
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </form>
+
+        <div class="login-info">
+            <p><i class="fas fa-info-circle"></i> Default credentials:</p>
+            <p><strong>Username:</strong> admin</p>
+            <p><strong>Password:</strong> nexus123</p>
+            <p class="small">Change in run.py file</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

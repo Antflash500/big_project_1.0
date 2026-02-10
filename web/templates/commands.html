@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1><i class="fas fa-terminal"></i> Custom Commands</h1>
+        <p>Create commands that users can use in Discord</p>
+    </div>
+
+    <div class="content-grid">
+        <div class="form-card">
+            <h2><i class="fas fa-plus-circle"></i> Add Command</h2>
+            <form id="addCommandForm">
+                <div class="form-group">
+                    <label>Command Name</label>
+                    <input type="text" id="cmdName" placeholder="hello" required>
+                    <small>Without ! prefix. Users will type: !yourcommand</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Response</label>
+                    <textarea id="cmdResponse" rows="4" 
+                              placeholder="Hello {user}! Welcome to Nexus Community." required></textarea>
+                    <small>Use {user} to mention the user, {server} for server name</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Add Command
+                </button>
+            </form>
+            
+            <div class="form-info">
+                <h3><i class="fas fa-lightbulb"></i> Tips:</h3>
+                <ul>
+                    <li>Keep command names simple and memorable</li>
+                    <li>Use variables: {user}, {server}, {channel}</li>
+                    <li>Test commands in Discord after adding</li>
+                    <li>Commands are case-insensitive in Discord</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="list-card">
+            <h2><i class="fas fa-list"></i> Existing Commands</h2>
+            
+            {% if commands %}
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Response Preview</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cmd in commands %}
+                        <tr>
+                            <td>
+                                <span class="command-badge">!</span>
+                                <strong>{{ cmd.cmd_name }}</strong>
+                            </td>
+                            <td class="response-preview">
+                                {{ cmd.response[:60] }}
+                                {% if cmd.response|length > 60 %}...{% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-danger delete-cmd-btn" 
+                                        data-cmd="{{ cmd.cmd_name }}">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-footer">
+                <p>Total: <strong>{{ commands|length }}</strong> commands</p>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-terminal"></i>
+                <h3>No commands yet</h3>
+                <p>Add your first custom command using the form</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Add command
+document.getElementById('addCommandForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('cmdName').value.trim().toLowerCase();
+    const response = document.getElementById('cmdResponse').value.trim();
+    
+    if (!name) {
+        alert('Please enter a command name');
+        return;
+    }
+    
+    if (!response) {
+        alert('Please enter a response');
+        return;
+    }
+    
+    if (name.includes(' ')) {
+        alert('Command name cannot contain spaces');
+        return;
+    }
+    
+    const btn = this.querySelector('button');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+    btn.disabled = true;
+    
+    try {
+        const res = await fetch('/api/command', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name, response})
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+            alert(`Command "!${name}" added successfully!`);
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to add command'));
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    } finally {
+        btn.innerHTML = '<i class="fas fa-save"></i> Add Command';
+        btn.disabled = false;
+    }
+});
+
+// Delete command
+document.querySelectorAll('.delete-cmd-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const cmdName = this.dataset.cmd;
+        
+        if (!confirm(`Delete command "!${cmdName}"?`)) {
+            return;
+        }
+        
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        this.disabled = true;
+        
+        try {
+            const res = await fetch(`/api/command/${encodeURIComponent(cmdName)}`, {
+                method: 'DELETE'
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok) {
+                alert(`Command "!${cmdName}" deleted!`);
+                location.reload();
+            } else {
+                alert('Error: ' + (data.error || 'Failed to delete'));
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
+});
+</script>
+
+<style>
+.command-badge {
+    display: inline-block;
+    background: #6a11cb;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.response-preview {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.form-info {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(106, 17, 203, 0.1);
+    border-radius: 8px;
+}
+
+.form-info h3 {
+    color: #6a11cb;
+    margin-bottom: 0.5rem;
+}
+
+.form-info ul {
+    margin-left: 1.5rem;
+    color: #b0b0b0;
+}
+
+.form-info li {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.table-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    color: #b0b0b0;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+</style>
+{% endblock %}

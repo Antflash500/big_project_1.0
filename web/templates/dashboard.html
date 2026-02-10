@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="welcome-section">
+        <h1><i class="fas fa-network-wired"></i> Welcome, {{ session.user }}!</h1>
+        <p>Manage your Nexus Community Discord Bot</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Total Users</h3>
+                <p class="stat-number">{{ stats.users }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #2ecc71 0%, #1abc9c 100%);">
+                <i class="fas fa-comment"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Messages</h3>
+                <p class="stat-number">{{ stats.messages }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
+                <i class="fas fa-terminal"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Commands</h3>
+                <p class="stat-number">{{ stats.commands }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+                <i class="fas fa-filter"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Filters</h3>
+                <p class="stat-number">{{ stats.filters }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+        <div class="actions-grid">
+            <a href="{{ url_for('commands_route') }}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <h3>Custom Commands</h3>
+                <p>Add/remove bot commands</p>
+                <span class="action-count">{{ stats.commands }} commands</span>
+            </a>
+
+            <a href="{{ url_for('filter_route') }}" class="action-card">
+                <div class="action-icon">
+                    <i class="fas fa-filter"></i>
+                </div>
+                <h3>Word Filter</h3>
+                <p>Manage filtered words</p>
+                <span class="action-count">{{ stats.filters }} words</span>
+            </a>
+
+            <div class="action-card status-card">
+                <div class="action-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>Bot Status</h3>
+                <p id="botStatusText">Checking...</p>
+                <span class="status-indicator" id="statusIndicator"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Check bot status
+async function checkBotStatus() {
+    try {
+        const response = await fetch('/api/status');
+        const data = await response.json();
+        
+        const statusText = document.getElementById('botStatusText');
+        const statusIndicator = document.getElementById('statusIndicator');
+        
+        if (data.online) {
+            statusText.textContent = '🟢 Online';
+            statusIndicator.style.backgroundColor = '#2ecc71';
+            statusIndicator.title = 'Bot is online';
+        } else {
+            statusText.textContent = '🔴 Offline';
+            statusIndicator.style.backgroundColor = '#e74c3c';
+            statusIndicator.title = 'Bot is offline';
+        }
+    } catch (error) {
+        document.getElementById('botStatusText').textContent = '⚠️ Error';
+        document.getElementById('statusIndicator').style.backgroundColor = '#f39c12';
+    }
+}
+
+// Check status on load and every 30 seconds
+checkBotStatus();
+setInterval(checkBotStatus, 30000);
+</script>
+
+<style>
+.action-count {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6a11cb;
+    font-weight: bold;
+}
+
+.status-card {
+    cursor: default;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+</style>
+{% endblock %}

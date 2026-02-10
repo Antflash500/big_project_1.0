@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Community Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-network-wired"></i>
+                <span>Nexus Community</span>
+            </div>
+            {% if session.user %}
+            <div class="nav-menu">
+                <a href="{{ url_for('dashboard_route') }}" class="nav-link">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="{{ url_for('commands_route') }}" class="nav-link">
+                    <i class="fas fa-terminal"></i> Commands
+                </a>
+                <a href="{{ url_for('filter_route') }}" class="nav-link">
+                    <i class="fas fa-filter"></i> Filter
+                </a>
+                <div class="user-info">
+                    <i class="fas fa-user"></i> {{ session.user }}
+                    <a href="{{ url_for('logout_route') }}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {% if category == 'success' %}
+                            <i class="fas fa-check-circle"></i>
+                        {% elif category == 'error' %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <p>© 2024 Nexus Community Bot | Dashboard v1.0</p>
+    </footer>
+
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
