@@ -1,6 +1,0 @@
-📁 CORE/ = OTAK AI (Kecerdasan, NLP, Decision Making)
-📁 CHARACTERS/ = TUBUH & KEPRIBADIAN (Visual, Animasi, Suara)  
-📁 INTEGRATIONS/ = TANGAN & MATA (Akses ke apps, API, data external)
-📁 INTERFACES/ = TAMPILAN FISIK (GUI, Window, Display)
-📁 CONFIG/ = SETTINGAN (Preferences, API keys, Settings)
-📁 UTILS/ = ALAT BANTU (Security, Logging, Tools)
